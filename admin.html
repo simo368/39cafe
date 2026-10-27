@@ -5,53 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f8f7f4" />
   <meta name="robots" content="noindex, nofollow" />
-  
+
   <title>Gestione menu — 39 Café & Bistrot</title>
 
-  <!-- Foglio di Stile Minimal Paper & Ink -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Schermata di Sblocco PIN (se non autenticato) -->
-  <div id="admin-auth-screen" style="display: none; padding: 60px 15px;">
-    <div class="modal" style="margin: auto; max-width: 380px; text-align: center;">
-      <div class="brand-mark" style="margin-top: 5px;">39</div>
-      <h2 style="margin-bottom: 6px;">Area Ristorante</h2>
-      <p style="font-size: 12px; color: var(--muted); margin-bottom: 20px;">
-        Inserisci il PIN del ristorante per modificare prezzi, disponibilità e piatti in tempo reale.
-      </p>
+  <!-- Accesso con PIN -->
+  <div id="admin-auth-screen" class="auth" style="display: none;">
+    <div class="auth-card">
+      <div class="brand-mark">39</div>
+      <h1>Gestione menu</h1>
+      <p>Inserisci il PIN per modificare piatti, prezzi e disponibilità.</p>
 
       <form id="admin-pin-login-form">
-        <input 
-          type="password" 
-          id="admin-standalone-pin-input" 
-          placeholder="••••" 
-          maxlength="8" 
-          style="text-align: center; font-size: 26px; letter-spacing: 6px; padding: 10px; margin-bottom: 8px;"
+        <input
+          type="password"
+          id="admin-standalone-pin-input"
+          class="pin-input"
+          placeholder="••••"
+          maxlength="8"
+          autocomplete="off"
+          aria-label="PIN"
           autofocus
         />
-        <p style="font-size: 11px; color: var(--muted); margin-bottom: 18px;">
-          PIN predefinito: <strong>3939</strong>
-        </p>
-
-        <div style="display: flex; gap: 8px;">
-          <a href="index.html" class="btn" style="flex: 1;">← Menu</a>
-          <button type="submit" class="btn primary" style="flex: 1;">Entra</button>
+        <div class="auth-actions">
+          <a href="index.html" class="btn">Torna al menu</a>
+          <button type="submit" class="btn primary">Entra</button>
         </div>
       </form>
+
+      <p class="auth-hint">PIN predefinito: 3939</p>
     </div>
   </div>
 
-  <!-- Dashboard Admin Principale (visibile dopo PIN) -->
-  <main class="admin" id="admin-dashboard-screen" style="display: none;">
-    <!-- Popolato dinamicamente da admin.js -->
-  </main>
+  <!-- Dashboard (popolata da admin.js) -->
+  <main class="admin" id="admin-dashboard-screen" style="display: none;"></main>
 
-  <!-- Contenitore Notifiche Toast -->
   <div class="toast-container" aria-live="polite"></div>
 
-  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/admin.js"></script>

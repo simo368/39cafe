@@ -4,19 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f8f7f4" />
-  <meta name="description" content="39 Café & Bistrot - Menù digitale dinamico con aggiornamenti in tempo reale su piatti, bibite e selezioni dello chef." />
-  
+  <meta name="description" content="39 Café & Bistrot - Menù digitale con aggiornamenti in tempo reale su piatti, bibite e disponibilità." />
+
   <title>Il menu — 39 Café & Bistrot</title>
 
-  <!-- Foglio di Stile Minimal Paper & Ink -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Contenitore Principale Vista Cliente -->
   <main class="page" id="public-menu-container">
-    
-    <!-- Header Brand e Copertina Bistrot -->
+
     <header class="brand">
       <div class="brand-photo" id="brand-photo-wrap">
         <img id="brand-hero-img" src="cover.jpg" alt="39 Café & Bistrot" />
@@ -26,60 +23,52 @@
       <h1 id="brand-hero-title">39 Café & Bistrot</h1>
       <p id="brand-hero-subtitle">Caffetteria speciale, cucina artigianale & aperitivi d'autore</p>
 
-      <div class="brand-meta" id="brand-meta-info">
-        <span id="brand-address-text">📍 Via del Corso, 39 - Roma</span>
-        <span id="brand-wifi-text">📶 WiFi: 39Cafe_Guest</span>
+      <div class="brand-meta">
+        <span id="brand-address-text"></span>
+        <span id="brand-wifi-text"></span>
       </div>
     </header>
 
-    <!-- Controlli: Ricerca Istantanea e Filtri Dietetici -->
-    <section class="controls-wrap" aria-label="Filtri e ricerca nel menu">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input 
-          type="search" 
-          id="search-input" 
-          placeholder="Cerca piatto, bevanda, ingrediente, allergene…" 
-          autocomplete="off" 
-          aria-label="Cerca nel menu"
-        />
-      </div>
+    <section class="controls" aria-label="Ricerca e filtri">
+      <input
+        type="search"
+        id="search-input"
+        class="search"
+        placeholder="Cerca un piatto, una bevanda, un ingrediente"
+        autocomplete="off"
+        aria-label="Cerca nel menu"
+      />
 
-      <div class="diet-chips" id="diet-filter-chips">
-        <button class="diet-chip active" data-diet="all">Tutti</button>
-        <button class="diet-chip" data-diet="veg">🍃 Vegetariano</button>
-        <button class="diet-chip" data-diet="vegan">🌱 Vegano</button>
-        <button class="diet-chip" data-diet="glutenFree">🌾 Senza Glutine</button>
+      <div class="chips" id="diet-filter-chips">
+        <button class="chip active" data-diet="all">Tutti</button>
+        <button class="chip" data-diet="veg">Vegetariano</button>
+        <button class="chip" data-diet="vegan">Vegano</button>
+        <button class="chip" data-diet="glutenFree">Senza glutine</button>
       </div>
     </section>
 
-    <!-- Etichetta Menu e Indicatore di Sincronizzazione Live -->
     <div class="menu-label">
       <h2>Il menu</h2>
-      <span class="live-status-pill" id="live-indicator-badge" title="Sincronizzazione in tempo reale con la cucina">
+      <span class="live" id="live-indicator-badge" title="Menu sincronizzato in tempo reale">
         <span class="live-dot online" id="live-dot"></span>
-        <span id="live-status-text">Online</span>
+        <span id="live-status-text">In diretta</span>
       </span>
     </div>
 
-    <!-- Elenco Categorie e Piatti (Dinamico da app.js) -->
     <div id="categories-content-container">
       <div class="loading">Caricamento del menu…</div>
     </div>
 
-    <!-- Footer Informativo -->
     <footer class="footer">
-      Per informazioni sugli allergeni, chiedi al personale.<br />
-      <span style="opacity: 0.75;">© 39 Café & Bistrot — Menù digitale con sincronizzazione in tempo reale</span><br />
+      Per informazioni sugli allergeni, chiedi al personale di sala.<br />
+      © 39 Café & Bistrot<br />
       <a class="admin-link" href="admin.html">Gestione menu</a>
     </footer>
 
   </main>
 
-  <!-- Contenitore Notifiche Toast -->
   <div class="toast-container" aria-live="polite"></div>
 
-  <!-- Script Motore di Sincronizzazione e Logica Clienti -->
   <script src="js/data.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/app.js"></script>
