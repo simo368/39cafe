@@ -294,26 +294,34 @@ a { color: inherit; text-decoration: none; }
   margin: -8px 0 6px;
 }
 
-/* Piatti */
+/* Piatti: piccoli riquadri in tinta */
 .dish {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 18px;
   align-items: center;
-  padding: 16px 0;
-  border-top: 1px solid var(--line-soft);
+  padding: 14px 16px;
+  margin-top: 10px;
+  background: #f3f1ea;
+  border: 1px solid #ece9e0;
+  border-radius: 14px;
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease),
+              background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.category-body .dish:first-of-type { border-top: 0; }
+.category-body > .dish:first-of-type { margin-top: 4px; }
+.category-body > .category-desc + .dish { margin-top: 12px; }
+
+.dish:hover { background: #efede4; border-color: #e3e0d5; }
 
 .category.open .dish {
   opacity: 1;
   transform: none;
-  transition-delay: calc(var(--i, 0) * 55ms + 120ms);
+  transition-delay: calc(var(--i, 0) * 55ms + 120ms), calc(var(--i, 0) * 55ms + 120ms), 0ms, 0ms;
 }
+
 
 .dish h3 {
   font: 400 17px/1.3 var(--font-serif);
@@ -787,11 +795,38 @@ a { color: inherit; text-decoration: none; }
 .item:hover { background: #fcfcfa; }
 .item.is-off .item-main { opacity: 0.5; }
 
-.item-main { min-width: 0; }
+.item-main { min-width: 0; display: flex; align-items: center; gap: 14px; }
+.item-text { min-width: 0; flex: 1; }
+
+.item-thumb {
+  flex: none;
+  width: 56px;
+  height: 48px;
+  border-radius: 9px;
+  background: #ebe9e2;
+  overflow: hidden;
+}
+
+.item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .item-name { font: 400 15px/1.3 var(--font-serif); }
 
 .item-name .dish-badge { margin-left: 8px; }
+
+/* Anteprima del piatto nel modale */
+.preview-label {
+  margin-bottom: 8px;
+  font-size: 10.5px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.preview { margin-bottom: 22px; padding: 14px; background: var(--bg); border: 1px dashed var(--line); border-radius: 16px; }
+.preview .dish { opacity: 1; transform: none; margin-top: 0; transition: none; pointer-events: none; }
+.preview .dish:hover { background: #f3f1ea; border-color: #ece9e0; }
+.preview .dish-photo { cursor: default; }
+
 
 .item-desc {
   margin-top: 2px;

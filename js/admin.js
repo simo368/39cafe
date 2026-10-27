@@ -171,8 +171,11 @@
             ${catDishes.length ? catDishes.map(d => `
               <div class="item ${d.available ? "" : "is-off"}" data-search="${escapeHtml((d.name + " " + (d.description || "")).toLowerCase())}">
                 <div class="item-main">
-                  <div class="item-name">${escapeHtml(d.name)}${d.badge ? `<span class="dish-badge">${escapeHtml(d.badge)}</span>` : ""}</div>
-                  <div class="item-desc">${escapeHtml(d.description || "Nessuna descrizione")}</div>
+                  <div class="item-thumb">${d.image ? `<img src="${escapeHtml(d.image)}" alt="" loading="lazy" onerror="this.remove()" />` : ""}</div>
+                  <div class="item-text">
+                    <div class="item-name">${escapeHtml(d.name)}${d.badge ? `<span class="dish-badge">${escapeHtml(d.badge)}</span>` : ""}</div>
+                    <div class="item-desc">${escapeHtml(d.description || "Nessuna descrizione")}</div>
+                  </div>
                 </div>
 
                 <label class="price-field" title="Modifica il prezzo">
@@ -388,6 +391,9 @@
         <section class="modal" role="dialog" aria-modal="true">
           <h2>${isEdit ? "Modifica piatto" : "Nuovo piatto"}</h2>
 
+          <div class="preview-label">Anteprima nel menu</div>
+          <div class="preview" id="dish-preview"></div>
+
           <form id="dish-form">
             <label class="field"><span>Nome</span>
               <input type="text" name="name" value="${escapeHtml(dish ? dish.name : "")}" required placeholder="Es. Tiramisù" />
@@ -447,6 +453,50 @@
     `);
 
     bindModalClose("dish-form-modal");
+
+    // Anteprima live: stesso aspetto del menu pubblico
+    const form = document.getElementById("dish-form");
+    const preview = document.getElementById("dish-preview");
+    const DIET = { diet_veg: "Vegetariano", diet_vegan: "Vegano", diet_glutenFree: "Senza glutine" };
+
+    function updatePreview() {
+      const fd = new FormData(form);
+      const name = (fd.get("name") || "").trim() || "Nome del piatto";
+      const desc = (fd.get("description") || "").trim();
+      const image = (fd.get("image") || "").trim();
+      const badge = (fd.get("badge") || "").trim();
+      const allergens = (fd.get("allergens") || "").trim();
+      const price = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(Number(fd.get("price")) || 0);
+      const sold = !fd.has("available");
+      const diet = Object.keys(DIET).filter(k => fd.has(k)).map(k => DIET[k]);
+
+      const meta = [];
+      if (diet.length) meta.push(`<span>${diet.join(" · ")}</span>`);
+      if (allergens && allergens.toLowerCase() !== "nessuno") meta.push(`<span>Allergeni: ${escapeHtml(allergens)}</span>`);
+
+      preview.innerHTML = `
+        <article class="dish ${sold ? "unavailable" : ""}">
+          <div>
+            <h3>
+              <span class="name">${escapeHtml(name)}</span>
+              ${badge ? `<span class="dish-badge">${escapeHtml(badge)}</span>` : ""}
+              ${sold ? `<span class="sold">Esaurito</span>` : ""}
+            </h3>
+            ${desc ? `<p>${escapeHtml(desc)}</p>` : ""}
+            <div class="dish-meta">
+              <span class="price">${price}</span>
+              ${meta.join("")}
+            </div>
+          </div>
+          ${image ? `<div class="dish-photo"><img src="${escapeHtml(image)}" alt="" onerror="this.parentNode.style.display='none'" /></div>` : ""}
+        </article>
+      `;
+    }
+
+    form.addEventListener("input", updatePreview);
+    form.addEventListener("change", updatePreview);
+    updatePreview();
+
 
     if (isEdit) {
       document.getElementById("dish-delete-btn").onclick = () => deleteDishConfirm(dishId);
