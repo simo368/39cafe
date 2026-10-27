@@ -1,11 +1,10 @@
 /**
  * 39 CAFÉ & BISTROT - CUSTOMER MENU & INTERFACE CONTROLLER
- * Gestione navigazione, filtri di ricerca, tag dietetici, animazioni e modali piatti.
+ * Render minimalista a libro/carta con fisarmonica e sincronizzazione real-time.
  */
 
 (function () {
   let menuData = null;
-  let activeCategoryFilter = "all";
   let activeDietFilter = "all"; // 'all', 'veg', 'vegan', 'glutenFree'
   let searchQuery = "";
 
@@ -18,22 +17,16 @@
   }
 
   // Toast notification
-  function showToast(text, duration = 3000) {
-    let container = document.querySelector(".toast-container");
-    if (!container) {
-      container = document.createElement("div");
-      container.className = "toast-container";
-      document.body.appendChild(container);
+  function showToast(text, duration = 2800) {
+    let e = document.querySelector(".toast");
+    if (!e) {
+      e = document.createElement("div");
+      e.className = "toast";
+      document.body.appendChild(e);
     }
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.innerHTML = `<span>${text}</span>`;
-    container.appendChild(toast);
-
+    e.textContent = text;
     setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateY(10px)";
-      setTimeout(() => toast.remove(), 250);
+      if (e) e.remove();
     }, duration);
   }
   window.showToast = showToast;
@@ -69,7 +62,7 @@
     dot.className = "live-dot";
     if (status === "online") {
       dot.classList.add("online");
-      text.textContent = "Online Live";
+      text.textContent = "Online";
     } else if (status === "syncing") {
       dot.classList.add("syncing");
       text.textContent = "Sincronizzazione…";
@@ -86,72 +79,35 @@
 
     const { restaurant, categories, dishes } = menuData;
 
-    // Aggiorna Hero Brand
+    // Aggiorna Header Brand
     const heroTitle = document.getElementById("brand-hero-title");
     const heroSubtitle = document.getElementById("brand-hero-subtitle");
     const heroMark = document.getElementById("brand-logo-mark");
     const heroImg = document.getElementById("brand-hero-img");
+    const photoWrap = document.getElementById("brand-photo-wrap");
     const heroAddress = document.getElementById("brand-address-text");
     const heroWifi = document.getElementById("brand-wifi-text");
 
     if (heroTitle) heroTitle.textContent = restaurant.name;
     if (heroSubtitle) heroSubtitle.textContent = restaurant.subtitle;
     if (heroMark) heroMark.textContent = restaurant.logo || "39";
-    if (heroImg && restaurant.photo) heroImg.src = restaurant.photo;
-    if (heroAddress) heroAddress.textContent = restaurant.address || "Roma Centro";
-    if (heroWifi) heroWifi.textContent = restaurant.wifi || "WiFi Gratuito";
+    if (heroAddress) heroAddress.textContent = restaurant.address ? `📍 ${restaurant.address}` : "📍 Roma";
+    if (heroWifi) heroWifi.textContent = restaurant.wifi ? `📶 WiFi: ${restaurant.wifi}` : "";
 
-    // Genera Pills Categorie
-    renderCategoryPills(categories, dishes);
+    if (heroImg && photoWrap) {
+      if (restaurant.photo) {
+        heroImg.src = restaurant.photo;
+        photoWrap.style.display = "grid";
+      } else {
+        photoWrap.style.display = "none";
+      }
+    }
 
-    // Filtra e renderizza i piatti
+    // Filtra e renderizza categorie e piatti
     renderDishesSection(categories, dishes);
   }
 
-  // Renderizza le pillole di navigazione categoria
-  function renderCategoryPills(categories, dishes) {
-    const navBar = document.getElementById("category-nav-bar");
-    if (!navBar) return;
-
-    const sortedCats = [...categories].sort((a, b) => a.order - b.order);
-
-    let html = `
-      <button class="cat-pill-btn ${activeCategoryFilter === 'all' ? 'active' : ''}" data-cat="all">
-        Tutti i Piatti <span class="count">(${dishes.length})</span>
-      </button>
-    `;
-
-    sortedCats.forEach(cat => {
-      const count = dishes.filter(d => d.categoryId === cat.id).length;
-      html += `
-        <button class="cat-pill-btn ${activeCategoryFilter === cat.id ? 'active' : ''}" data-cat="${cat.id}">
-          ${escapeHtml(cat.name)} <span class="count">(${count})</span>
-        </button>
-      `;
-    });
-
-    navBar.innerHTML = html;
-
-    // Listener click sulle pillole
-    navBar.querySelectorAll(".cat-pill-btn").forEach(btn => {
-      btn.onclick = () => {
-        const catId = btn.getAttribute("data-cat");
-        activeCategoryFilter = catId;
-        renderCategoryPills(categories, dishes);
-        if (catId === "all") {
-          renderDishesSection(categories, dishes);
-        } else {
-          renderDishesSection(categories, dishes);
-          const targetEl = document.getElementById(`section-${catId}`);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }
-      };
-    });
-  }
-
-  // Renderizza le sezioni e i piatti
+  // Renderizza le sezioni a fisarmonica e i piatti
   function renderDishesSection(categories, dishes) {
     const listContainer = document.getElementById("categories-content-container");
     if (!listContainer) return;
@@ -159,15 +115,10 @@
     const query = searchQuery.trim().toLowerCase();
     const sortedCats = [...categories].sort((a, b) => a.order - b.order);
 
-    // Filtro attivo
-    const visibleCats = activeCategoryFilter === "all"
-      ? sortedCats
-      : sortedCats.filter(c => c.id === activeCategoryFilter);
-
     let html = "";
     let totalVisibleDishes = 0;
 
-    visibleCats.forEach(cat => {
+    sortedCats.forEach(cat => {
       let catDishes = dishes.filter(d => d.categoryId === cat.id);
 
       // Filtro ricerca testuale
@@ -191,101 +142,57 @@
       totalVisibleDishes += catDishes.length;
 
       html += `
-        <section class="category-section" id="section-${cat.id}">
-          <div class="category-header">
-            <div>
-              <h2>${escapeHtml(cat.name)}</h2>
-              ${cat.description ? `<p class="cat-desc">${escapeHtml(cat.description)}</p>` : ""}
-            </div>
-          </div>
-          
-          <div class="dishes-grid">
-            ${catDishes.length > 0 ? catDishes.map(dish => renderDishCard(dish)).join("") : `
-              <div class="empty-notice">
-                Nessun piatto disponibile in questa categoria al momento.
-              </div>
+        <details class="category" open id="cat-${cat.id}">
+          <summary>${escapeHtml(cat.name)}</summary>
+          <div class="category-body">
+            ${cat.description ? `<p class="category-desc">${escapeHtml(cat.description)}</p>` : ""}
+            ${catDishes.length > 0 ? catDishes.map(dish => renderDish(dish)).join("") : `
+              <div class="empty">Nessun piatto disponibile in questa categoria al momento.</div>
             `}
           </div>
-        </section>
+        </details>
       `;
     });
 
     if (totalVisibleDishes === 0) {
       html = `
-        <div class="empty-notice" style="padding: 50px 20px;">
-          <p style="font-size: 16px; margin-bottom: 8px;">Nessun piatto trovato con i criteri selezionati.</p>
+        <div class="empty" style="padding: 40px 20px;">
+          <p style="font-size: 14px; margin-bottom: 12px;">Nessun piatto trovato con i criteri selezionati.</p>
           <button class="btn sm" onclick="window.App.resetFilters()">Azzera filtri di ricerca</button>
         </div>
       `;
     }
 
     listContainer.innerHTML = html;
-
-    // Setup listener click foto per ingrandimento
-    listContainer.querySelectorAll(".dish-card-img-wrap").forEach(wrap => {
-      wrap.onclick = () => {
-        const dishId = wrap.getAttribute("data-dish-id");
-        openDishModal(dishId);
-      };
-    });
   }
 
-  // Renderizza la singola card di un piatto (con foto grande e ben visibile)
-  function renderDishCard(dish) {
+  // Renderizza il singolo articolo piatto
+  function renderDish(dish) {
     const isSoldOut = !dish.available;
-    const dietaryBadges = renderDietaryTags(dish.dietary);
 
     return `
-      <article class="dish-card ${isSoldOut ? 'unavailable' : ''}" id="dish-${dish.id}">
-        <div class="dish-card-img-wrap" data-dish-id="${dish.id}">
+      <article class="dish ${isSoldOut ? 'unavailable' : ''}" id="dish-${dish.id}">
+        <div>
+          <h3>
+            ${escapeHtml(dish.name)}
+            ${dish.badge ? `<span class="dish-badge">${escapeHtml(dish.badge)}</span>` : ""}
+            ${isSoldOut ? ' · Esaurito' : ''}
+          </h3>
+          <p>${escapeHtml(dish.description || '')}</p>
+          ${dish.allergens ? `<small class="allergens">ALLERGENI · ${escapeHtml(dish.allergens)}</small>` : ''}
+          <div class="price">${formatEuro(dish.price)}</div>
+        </div>
+        ${dish.image ? `
           <img 
-            class="dish-card-img" 
-            src="${escapeHtml(dish.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80')}" 
-            alt="${escapeHtml(dish.name)}"
-            loading="lazy"
-            onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80'"
+            loading="lazy" 
+            src="${escapeHtml(dish.image)}" 
+            alt="${escapeHtml(dish.name)}" 
+            onclick="window.App.openDishModal('${dish.id}')"
+            onerror="this.style.display='none'"
           />
-          ${dish.badge ? `<span class="dish-badge gold">${escapeHtml(dish.badge)}</span>` : ""}
-          ${isSoldOut ? `<div class="sold-out-overlay">Esaurito</div>` : ""}
-        </div>
-
-        <div class="dish-card-body">
-          <div class="dish-title-row">
-            <h3 class="dish-name">${escapeHtml(dish.name)}</h3>
-            <span class="dish-price">${formatEuro(dish.price)}</span>
-          </div>
-
-          <p class="dish-desc">${escapeHtml(dish.description || "")}</p>
-
-          <div class="dish-card-footer">
-            <div class="dietary-tags">
-              ${dietaryBadges}
-            </div>
-            ${dish.allergens ? `
-              <span class="allergens-pill" onclick="window.App.showAllergensModal('${escapeHtml(dish.name)}', '${escapeHtml(dish.allergens)}')">
-                ⚠️ Allergeni
-              </span>
-            ` : ""}
-          </div>
-        </div>
+        ` : ''}
       </article>
     `;
-  }
-
-  // Helper tag alimentari (Veg, Vegan, Senza Glutine)
-  function renderDietaryTags(dietary) {
-    if (!Array.isArray(dietary)) return "";
-    let html = "";
-    if (dietary.includes("veg")) {
-      html += `<span class="diet-pill" title="Vegetariano">🍃 Veg</span>`;
-    }
-    if (dietary.includes("vegan")) {
-      html += `<span class="diet-pill" title="Vegano">🌱 Vegan</span>`;
-    }
-    if (dietary.includes("glutenFree")) {
-      html += `<span class="diet-pill" title="Senza Glutine">🌾 Gluten Free</span>`;
-    }
-    return html;
   }
 
   // Modale visualizzazione dettagliata del piatto
@@ -294,77 +201,42 @@
     if (!dish) return;
 
     const modalHtml = `
-      <div class="modal-backdrop" id="dish-detail-modal" onclick="if(event.target===this)this.remove()">
-        <div class="modal-box" style="max-width: 500px;">
-          <div style="position: relative; height: 260px; overflow: hidden;">
-            <img 
-              src="${escapeHtml(dish.image)}" 
-              alt="${escapeHtml(dish.name)}"
-              style="width: 100%; height: 100%; object-fit: cover;"
-            />
-            <button 
-              class="modal-close-btn" 
-              onclick="document.getElementById('dish-detail-modal').remove()"
-              style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; width: 34px; height: 34px; border-radius: 50%;"
-            >×</button>
-            ${dish.badge ? `<span class="dish-badge gold" style="top: 12px; left: 12px;">${escapeHtml(dish.badge)}</span>` : ""}
-          </div>
-          
-          <div class="modal-body">
-            <div class="dish-title-row" style="margin-bottom: 10px;">
-              <h2 style="font-family: var(--font-serif); font-size: 22px;">${escapeHtml(dish.name)}</h2>
-              <span class="dish-price" style="font-size: 18px;">${formatEuro(dish.price)}</span>
+      <div class="modal-bg" id="dish-detail-modal" onclick="if(event.target===this)this.remove()">
+        <section class="modal">
+          ${dish.image ? `
+            <div style="width: 100%; height: 210px; border-radius: 8px; overflow: hidden; margin-bottom: 16px; background: #ecebe5;">
+              <img 
+                src="${escapeHtml(dish.image)}" 
+                alt="${escapeHtml(dish.name)}"
+                style="width: 100%; height: 100%; object-fit: cover;"
+              />
             </div>
-            
-            <p style="font-size: 13.5px; line-height: 1.5; color: var(--ink-secondary); margin-bottom: 16px;">
-              ${escapeHtml(dish.description)}
-            </p>
+          ` : ''}
 
-            <div style="padding: 12px; background: var(--bg-subtle); border-radius: var(--radius-sm); font-size: 12px; margin-bottom: 12px;">
-              <strong>Allergeni presenti:</strong> ${dish.allergens ? escapeHtml(dish.allergens) : "Nessun allergene dichiarato"}
-            </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px;">
+            <h2>${escapeHtml(dish.name)} ${dish.badge ? `<span class="dish-badge">${escapeHtml(dish.badge)}</span>` : ''}</h2>
+            <div class="price" style="font-size: 15px;">${formatEuro(dish.price)}</div>
+          </div>
 
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              ${renderDietaryTags(dish.dietary)}
-            </div>
+          <p style="font-size: 13px; color: #77766f; line-height: 1.5; margin: 8px 0 14px;">
+            ${escapeHtml(dish.description || 'Nessuna descrizione disponibile.')}
+          </p>
+
+          <div style="padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 11px; margin-bottom: 14px;">
+            <strong>Allergeni:</strong> ${dish.allergens ? escapeHtml(dish.allergens) : "Nessun allergene dichiarato"}
           </div>
-          
-          <div class="modal-footer">
-            <button class="btn primary" onclick="document.getElementById('dish-detail-modal').remove()">Chiudi</button>
+
+          <div class="modal-buttons">
+            <button type="button" class="btn primary" onclick="document.getElementById('dish-detail-modal').remove()">Chiudi</button>
           </div>
-        </div>
+        </section>
       </div>
     `;
 
     document.body.insertAdjacentHTML("beforeend", modalHtml);
   }
 
-  // Modale allergeni
-  function showAllergensModal(dishName, allergens) {
-    const modalHtml = `
-      <div class="modal-backdrop" id="allergens-modal" onclick="if(event.target===this)this.remove()">
-        <div class="modal-box" style="max-width: 400px;">
-          <div class="modal-header">
-            <h2>Allergeni</h2>
-            <button class="modal-close-btn" onclick="document.getElementById('allergens-modal').remove()">×</button>
-          </div>
-          <div class="modal-body">
-            <p style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">${escapeHtml(dishName)}</p>
-            <p style="font-size: 13px; color: var(--ink-secondary);">${escapeHtml(allergens)}</p>
-            <p style="font-size: 11px; color: var(--ink-muted); margin-top: 15px;">
-              * Per chiarimenti su contaminazioni crociate si prega di fare sempre riferimento al nostro personale di sala.
-            </p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn primary" onclick="document.getElementById('allergens-modal').remove()">Ho capito</button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
-  }
-
-  // Setup Event Listeners (Ricerca, Chips dietetici)
+  // Setup Event Listeners
   function setupEventListeners() {
     const searchInput = document.getElementById("search-input");
     if (searchInput) {
@@ -375,9 +247,9 @@
     }
 
     // Chips dietetici
-    document.querySelectorAll(".chip-btn").forEach(chip => {
+    document.querySelectorAll(".diet-chip, .chip-btn").forEach(chip => {
       chip.addEventListener("click", () => {
-        document.querySelectorAll(".chip-btn").forEach(c => c.classList.remove("active"));
+        document.querySelectorAll(".diet-chip, .chip-btn").forEach(c => c.classList.remove("active"));
         chip.classList.add("active");
         activeDietFilter = chip.getAttribute("data-diet");
         renderDishesSection(menuData.categories, menuData.dishes);
@@ -385,7 +257,7 @@
     });
   }
 
-  // Utility escape HTML per sicurezza XSS
+  // Utility escape HTML
   function escapeHtml(str) {
     return String(str ?? "").replace(/[&<>"']/g, c => ({
       "&": "&amp;",
@@ -399,15 +271,13 @@
   // Esporta interfaccia pubblica
   window.App = {
     init: initApp,
-    showAllergensModal: showAllergensModal,
     openDishModal: openDishModal,
     resetFilters: function () {
       searchQuery = "";
       activeDietFilter = "all";
-      activeCategoryFilter = "all";
       const s = document.getElementById("search-input");
       if (s) s.value = "";
-      document.querySelectorAll(".chip-btn").forEach((c, i) => {
+      document.querySelectorAll(".diet-chip, .chip-btn").forEach((c, i) => {
         if (i === 0) c.classList.add("active");
         else c.classList.remove("active");
       });

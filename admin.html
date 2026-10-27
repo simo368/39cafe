@@ -2,90 +2,56 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
-  <meta name="theme-color" content="#18181b" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f8f7f4" />
   <meta name="robots" content="noindex, nofollow" />
   
-  <title>Pannello di Gestione — 39 Café & Bistrot</title>
+  <title>Gestione menu — 39 Café & Bistrot</title>
 
-  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Stylesheet Unificato -->
+  <!-- Foglio di Stile Minimal Paper & Ink -->
   <link rel="stylesheet" href="style.css" />
 </head>
-<body style="background: var(--bg-subtle);">
+<body>
 
-  <!-- Barra Superiore Navigazione Rapida Admin -->
-  <div style="background: #18181b; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
-    <div class="app-container" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="brand-logo-mark" style="width: 30px; height: 30px; font-size: 14px;">39</span>
-        <strong style="font-size: 13.5px; letter-spacing: 0.3px;">Gestione Menù & Prezzi</strong>
-        <div class="live-indicator" style="background: rgba(255,255,255,0.08); font-size: 10px; padding: 3px 8px;">
-          <span class="live-dot" id="live-dot"></span>
-          <span id="live-status-text">Online Live</span>
+  <!-- Schermata di Sblocco PIN (se non autenticato) -->
+  <div id="admin-auth-screen" style="display: none; padding: 60px 15px;">
+    <div class="modal" style="margin: auto; max-width: 380px; text-align: center;">
+      <div class="brand-mark" style="margin-top: 5px;">39</div>
+      <h2 style="margin-bottom: 6px;">Area Ristorante</h2>
+      <p style="font-size: 12px; color: var(--muted); margin-bottom: 20px;">
+        Inserisci il PIN del ristorante per modificare prezzi, disponibilità e piatti in tempo reale.
+      </p>
+
+      <form id="admin-pin-login-form">
+        <input 
+          type="password" 
+          id="admin-standalone-pin-input" 
+          placeholder="••••" 
+          maxlength="8" 
+          style="text-align: center; font-size: 26px; letter-spacing: 6px; padding: 10px; margin-bottom: 8px;"
+          autofocus
+        />
+        <p style="font-size: 11px; color: var(--muted); margin-bottom: 18px;">
+          PIN predefinito: <strong>3939</strong>
+        </p>
+
+        <div style="display: flex; gap: 8px;">
+          <a href="index.html" class="btn" style="flex: 1;">← Menu</a>
+          <button type="submit" class="btn primary" style="flex: 1;">Entra</button>
         </div>
-      </div>
-
-      <div style="display: flex; gap: 8px;">
-        <a href="index.html" class="btn sm" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">
-          👁️ Vai al Menù Clienti
-        </a>
-        <button id="admin-logout-btn" class="btn sm" style="background: transparent; color: #a1a1aa; border-color: transparent;" onclick="window.AdminApp.logout()">
-          Esci
-        </button>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- Contenitore Principale Schermata PIN o Dashboard -->
-  <main class="app-container" style="padding-top: 24px; padding-bottom: 60px;">
-    
-    <!-- Schermata di Sblocco PIN (se non autenticato) -->
-    <div id="admin-auth-screen" style="display: none; max-width: 400px; margin: 40px auto; text-align: center;">
-      <div class="modal-box" style="padding: 32px 24px; box-shadow: var(--shadow-lg);">
-        <div class="brand-logo-mark" style="margin: 0 auto 16px; background: var(--accent); color: #fff; width: 50px; height: 50px; font-size: 22px;">39</div>
-        <h2 style="font-family: var(--font-serif); font-size: 24px; margin-bottom: 8px;">Accesso Amministrazione</h2>
-        <p style="font-size: 12.5px; color: var(--ink-secondary); margin-bottom: 22px;">
-          Inserisci il PIN del ristorante per modificare prezzi, disponibilità e categorie in tempo reale.
-        </p>
-
-        <form id="admin-pin-login-form">
-          <input 
-            type="password" 
-            id="admin-standalone-pin-input" 
-            class="form-control" 
-            placeholder="••••" 
-            maxlength="8" 
-            style="text-align: center; font-size: 26px; letter-spacing: 8px; padding: 12px; margin-bottom: 12px;"
-            autofocus
-          />
-
-          <p style="font-size: 11px; color: var(--ink-muted); margin-bottom: 20px;">
-            PIN predefinito: <strong>3939</strong>
-          </p>
-
-          <button type="submit" class="btn primary" style="width: 100%; padding: 12px; font-size: 14px;">
-            Sblocca Pannello
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Schermata Dashboard Completa (visibile dopo PIN) -->
-    <div id="admin-dashboard-screen" style="display: none;">
-      <!-- Popolato dinamicamente da admin.js -->
-    </div>
-
+  <!-- Dashboard Admin Principale (visibile dopo PIN) -->
+  <main class="admin" id="admin-dashboard-screen" style="display: none;">
+    <!-- Popolato dinamicamente da admin.js -->
   </main>
 
-  <!-- Container Notifiche Toast -->
+  <!-- Contenitore Notifiche Toast -->
   <div class="toast-container" aria-live="polite"></div>
 
-  <!-- ================= SCRIPT PANNELLO GESTIONE ================= -->
+  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/admin.js"></script>

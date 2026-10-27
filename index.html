@@ -2,111 +2,84 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
-  <meta name="theme-color" content="#f9f8f5" />
-  <meta name="description" content="39 Café & Bistrot - Menù digitale dinamico con aggiornamenti istantanei in tempo reale su piatti, bibite e vini." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f8f7f4" />
+  <meta name="description" content="39 Café & Bistrot - Menù digitale dinamico con aggiornamenti in tempo reale su piatti, bibite e selezioni dello chef." />
   
-  <title>39 Café & Bistrot — Menù Digitale</title>
+  <title>Il menu — 39 Café & Bistrot</title>
 
-  <!-- Google Fonts: Playfair Display (Serif Elegante) & Plus Jakarta Sans (UI Moderna) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Stylesheet Unificato -->
+  <!-- Foglio di Stile Minimal Paper & Ink -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ================= VISTA PUBBLICA MENÙ CLIENTI ================= -->
-  <div id="public-menu-container">
+  <!-- Contenitore Principale Vista Cliente -->
+  <main class="page" id="public-menu-container">
     
-    <!-- Hero Banner & Identità Bistrot -->
-    <header class="app-container">
-      <div class="brand-hero">
-        <img 
-          id="brand-hero-img" 
-          class="brand-hero-img" 
-          src="cover.jpg" 
-          alt="39 Café & Bistrot"
-          loading="eager"
-        />
-        <div class="brand-hero-overlay">
-          <div class="brand-badge-wrap">
-            <span class="brand-logo-mark" id="brand-logo-mark">39</span>
-            <div class="live-indicator" id="live-indicator-badge" title="Stato sincronizzazione in tempo reale con la cassa e la cucina">
-              <span class="live-dot" id="live-dot"></span>
-              <span id="live-status-text">Online Live</span>
-            </div>
-          </div>
+    <!-- Header Brand e Copertina Bistrot -->
+    <header class="brand">
+      <div class="brand-photo" id="brand-photo-wrap">
+        <img id="brand-hero-img" src="cover.jpg" alt="39 Café & Bistrot" />
+      </div>
 
-          <h1 class="brand-title" id="brand-hero-title">39 Café & Bistrot</h1>
-          <p class="brand-subtitle" id="brand-hero-subtitle">
-            Caffetteria speciale, cucina artigianale & aperitivi d'autore
-          </p>
+      <div class="brand-mark" id="brand-logo-mark">39</div>
+      <h1 id="brand-hero-title">39 Café & Bistrot</h1>
+      <p id="brand-hero-subtitle">Caffetteria speciale, cucina artigianale & aperitivi d'autore</p>
 
-          <div class="brand-meta-pills">
-            <span class="meta-pill">📍 <span id="brand-address-text">Via del Corso, 39 - Roma</span></span>
-            <span class="meta-pill">📶 <span id="brand-wifi-text">39Cafe_Guest</span></span>
-            <span class="meta-pill">🕒 Cucina Aperta No-Stop</span>
-          </div>
-        </div>
+      <div class="brand-meta" id="brand-meta-info">
+        <span id="brand-address-text">📍 Via del Corso, 39 - Roma</span>
+        <span id="brand-wifi-text">📶 WiFi: 39Cafe_Guest</span>
       </div>
     </header>
 
-    <!-- Controlli Sticky: Ricerca, Barra Categorie e Filtri Dietetici -->
-    <nav class="menu-controls" aria-label="Navigazione Categorie Menù">
-      <div class="app-container">
-        <!-- Barra di Ricerca Istantanea -->
-        <div class="search-box-wrap">
-          <span class="search-icon">🔍</span>
-          <input 
-            type="search" 
-            id="search-input" 
-            class="search-input" 
-            placeholder="Cerca piatto, bibita, vino o ingrediente…" 
-            autocomplete="off"
-            aria-label="Cerca nel menù"
-          />
-        </div>
-
-        <!-- Barra a Scorrimento Orizzontale per Categorie -->
-        <div class="category-nav-bar" id="category-nav-bar" role="tablist">
-          <!-- Popolato dinamicamente da app.js -->
-        </div>
-
-        <!-- Chip Filtro Veloce Dietetico -->
-        <div class="filter-chips">
-          <button class="chip-btn active" data-diet="all">Tutti</button>
-          <button class="chip-btn" data-diet="veg">🍃 Vegetariano</button>
-          <button class="chip-btn" data-diet="vegan">🌱 Vegano</button>
-          <button class="chip-btn" data-diet="glutenFree">🌾 Senza Glutine</button>
-        </div>
+    <!-- Controlli: Ricerca Istantanea e Filtri Dietetici -->
+    <section class="controls-wrap" aria-label="Filtri e ricerca nel menu">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="search" 
+          id="search-input" 
+          placeholder="Cerca piatto, bevanda, ingrediente, allergene…" 
+          autocomplete="off" 
+          aria-label="Cerca nel menu"
+        />
       </div>
-    </nav>
 
-    <!-- Sezioni Principali Piatti & Bibite -->
-    <main class="app-container" id="categories-content-container" role="region" aria-label="Elenco piatti e bevande">
-      <!-- Popolato dinamicamente da app.js -->
-    </main>
-
-    <!-- Footer Informativo con Link al Pannello Admin Separato -->
-    <footer class="site-footer app-container">
-      <p>Per qualsiasi informazione su intolleranze, ingredienti freschi e allergeni, si prega di rivolgersi al personale di sala.</p>
-      <p style="margin-top: 6px; font-size: 10.5px; opacity: 0.8;">© 39 Café & Bistrot — Menù digitale con sincronizzazione Cloud in tempo reale</p>
-      
-      <div style="margin-top: 15px;">
-        <a href="admin.html" class="footer-admin-btn" title="Accesso al pannello di controllo del ristorante">
-          🔒 Area Riservata / Gestione Menù
-        </a>
+      <div class="diet-chips" id="diet-filter-chips">
+        <button class="diet-chip active" data-diet="all">Tutti</button>
+        <button class="diet-chip" data-diet="veg">🍃 Vegetariano</button>
+        <button class="diet-chip" data-diet="vegan">🌱 Vegano</button>
+        <button class="diet-chip" data-diet="glutenFree">🌾 Senza Glutine</button>
       </div>
+    </section>
+
+    <!-- Etichetta Menu e Indicatore di Sincronizzazione Live -->
+    <div class="menu-label">
+      <h2>Il menu</h2>
+      <span class="live-status-pill" id="live-indicator-badge" title="Sincronizzazione in tempo reale con la cucina">
+        <span class="live-dot online" id="live-dot"></span>
+        <span id="live-status-text">Online</span>
+      </span>
+    </div>
+
+    <!-- Elenco Categorie e Piatti (Dinamico da app.js) -->
+    <div id="categories-content-container">
+      <div class="loading">Caricamento del menu…</div>
+    </div>
+
+    <!-- Footer Informativo -->
+    <footer class="footer">
+      Per informazioni sugli allergeni, chiedi al personale.<br />
+      <span style="opacity: 0.75;">© 39 Café & Bistrot — Menù digitale con sincronizzazione in tempo reale</span><br />
+      <a class="admin-link" href="admin.html">Gestione menu</a>
     </footer>
-  </div>
 
-  <!-- Container Notifiche Toast -->
+  </main>
+
+  <!-- Contenitore Notifiche Toast -->
   <div class="toast-container" aria-live="polite"></div>
 
-  <!-- ================= SCRIPT VISTA PUBBLICA ================= -->
+  <!-- Script Motore di Sincronizzazione e Logica Clienti -->
   <script src="js/data.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/app.js"></script>
